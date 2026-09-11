@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLW Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>SLW Pro</h1>
+    <p>Sliding Window Price & Cutting Calculator</p>
+  </div>
+  <button id="settingsBtn" class="icon-btn">⚙</button>
+</header>
+
+<main>
+
+  <!-- PROJECT -->
+  <section class="card">
+    <div class="section-title">
+      <h2>SLW Calculation</h2>
+      <span id="status">Ready</span>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Frame Width</label>
+        <input id="frameWidth" type="text" placeholder='4&apos;'>
+      </div>
+
+      <div class="field">
+        <label>Frame Height</label>
+        <input id="frameHeight" type="text" placeholder='4&apos;'>
+      </div>
+
+      <div class="field">
+        <label>Panel</label>
+        <select id="panel">
+          <option value="2">2 Panel</option>
+          <option value="4">4 Panel</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Fixed Glass</label>
+        <select id="fixedType">
+          <option value="none">No Fixed Glass</option>
+          <option value="top">Top Fixed</option>
+          <option value="bottom">Bottom Fixed</option>
+          <option value="both">Top + Bottom Fixed</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div id="fixedHeightBox" class="fixed-grid hidden">
+
+      <div id="topFixedBox" class="field">
+        <label>Top Fixed Height</label>
+        <input id="topFixedHeight" type="text" placeholder='1&apos;6"'>
+      </div>
+
+      <div id="bottomFixedBox" class="field">
+        <label>Bottom Fixed Height</label>
+        <input id="bottomFixedHeight" type="text" placeholder='1&apos;6"'>
+      </div>
+
+    </div>
+
+    <button id="calculateBtn" class="primary-btn">
+      Calculate
+    </button>
+  </section>
+
+
+  <!-- SUMMARY -->
+  <section id="summaryCard" class="card hidden">
+    <div class="section-title">
+      <h2>Result</h2>
+      <span id="resultSize"></span>
+    </div>
+
+    <div class="summary-grid">
+
+      <div class="summary-item">
+        <small>Door Leaf Size</small>
+        <strong id="doorSize">-</strong>
+      </div>
+
+      <div class="summary-item">
+        <small>Door Leaves</small>
+        <strong id="doorLeaves">-</strong>
+      </div>
+
+      <div class="summary-item">
+        <small>Glass Area</small>
+        <strong id="glassArea">-</strong>
+      </div>
+
+      <div class="summary-item">
+        <small>Aluminium Bars</small>
+        <strong id="barCount">-</strong>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- SECTIONS -->
+  <section class="card">
+    <div class="section-title">
+      <h2>Required Aluminium</h2>
+      <small>Tap a section for cutting detail</small>
+    </div>
+
+    <div id="sectionList" class="list">
+      <div class="empty">
+        Calculate an SLW to see required sections.
+      </div>
+    </div>
+  </section>
+
+
+  <!-- GLASS -->
+  <section class="card">
+    <div class="section-title">
+      <h2>Required Glass</h2>
+      <small>Sheet cutting</small>
+    </div>
+
+    <div id="glassList" class="list">
+      <div class="empty">
+        Glass pieces will appear here.
+      </div>
+    </div>
+
+    <div id="sheetResult"></div>
+  </section>
+
+
+  <!-- PRICE -->
+  <section id="priceCard" class="card hidden">
+    <h2>Price</h2>
+
+    <div class="price-row">
+      <span>Aluminium</span>
+      <strong id="aluCost">0 Ks</strong>
+    </div>
+
+    <div class="price-row">
+      <span>Glass</span>
+      <strong id="glassCost">0 Ks</strong>
+    </div>
+
+    <div class="price-row">
+      <span>Labour</span>
+      <strong id="labourCost">0 Ks</strong>
+    </div>
+
+    <div class="price-row total">
+      <span>Total Cost</span>
+      <strong id="totalCost">0 Ks</strong>
+    </div>
+
+    <div class="price-row">
+      <span>Profit</span>
+      <strong id="profitAmount">0 Ks</strong>
+    </div>
+
+    <div class="selling-price">
+      <small>Selling Price</small>
+      <strong id="sellingPrice">0 Ks</strong>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>Settings</h2>
+      <button id="closeSettings">×</button>
+    </div>
+
+    <h3>Cutting</h3>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Unit</label>
+        <select id="unit">
+          <option value="fractional">Fractional Feet & Inches</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Kerf</label>
+        <input id="kerf" type="text" value="0">
+      </div>
+
+    </div>
+
+
+    <h3>Aluminium Stock</h3>
+
+    <div id="sectionSettings"></div>
+
+
+    <h3>Glass Stock</h3>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Stock Sheet Width</label>
+        <input id="sheetWidth" value="4'">
+      </div>
+
+      <div class="field">
+        <label>Stock Sheet Height</label>
+        <input id="sheetHeight" value="8'">
+      </div>
+
+      <div class="field">
+        <label>Glass Price / sqft</label>
+        <input id="glassPrice" type="number" value="0">
+      </div>
+
+    </div>
+
+
+    <h3>Labour & Profit</h3>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Labour Price / sqft</label>
+        <input id="labourPrice" type="number" value="0">
+      </div>
+
+      <div class="field">
+        <label>Profit %</label>
+        <input id="profitPercent" type="number" value="0">
+      </div>
+
+    </div>
+
+    <button id="saveSettings" class="primary-btn">
+      Save Settings
+    </button>
+
+  </div>
+</div>
+
+
+<!-- CUTTING MODAL -->
+<div id="cutModal" class="modal hidden">
+
+  <div class="modal-box large">
+
+    <div class="modal-header">
+      <div>
+        <h2 id="cutTitle">Cutting Detail</h2>
+        <small id="cutSubtitle"></small>
+      </div>
+
+      <button id="closeCut">×</button>
+    </div>
+
+    <div id="cutContent"></div>
+
+  </div>
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
