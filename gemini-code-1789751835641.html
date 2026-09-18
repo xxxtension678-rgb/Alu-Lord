@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Alu Lord</title>
+  
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <style>
+:root{
+--bg:#000000;
+--card:rgba(28,28,30,0.72);
+--card2:rgba(44,44,46,0.65);
+--border:rgba(255,255,255,0.12);
+--text:#ffffff;
+--sub:rgba(235,235,245,0.6);
+--input:rgba(120,120,128,0.24);
+--accent:#0A84FF;
+--accentText:#ffffff;
+--danger:#FF453A;
+--btn:rgba(116,116,128,0.24);
+--shadow:0 12px 30px rgba(0,0,0,0.4);
+--radius:16px;
+}
+[data-theme="light"]{
+--bg:#F2F2F7;
+--card:rgba(255,255,255,0.8);
+--card2:rgba(255,255,255,0.95);
+--border:rgba(60,60,67,0.12);
+--text:#000000;
+--sub:rgba(60,60,67,0.6);
+--input:rgba(118,118,128,0.12);
+--accent:#007AFF;
+--accentText:#ffffff;
+--danger:#FF3B30;
+--btn:rgba(116,116,128,0.12);
+--shadow:0 10px 25px rgba(0,0,0,0.06);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+
+body{
+min-height:100vh;
+color:var(--text);
+display:flex;
+justify-content:center;
+padding:0;
+background:var(--bg);
+transition:background 0.3s ease;
+-webkit-font-smoothing:antialiased;
+}
+
+.app-container{
+width:100%;
+max-width:440px;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+background:transparent;
+position:relative;
+padding-bottom:20px;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 20px;
+position:sticky;
+top:0;
+z-index:30;
+background:rgba(20,20,20,0.65);
+border-bottom:0.5px solid var(--border);
+backdrop-filter:blur(20px) saturate(180%);
+-webkit-backdrop-filter:blur(20px) saturate(180%);
+}
+[data-theme="light"] .top-bar{
+background:rgba(249,249,249,0.78);
+}
+
+.brand-title{
+font-size:17px;
+font-weight:600;
+letter-spacing:-0.4px;
+color:var(--text);
+}
+
+.user-status-area {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.user-email-text {
+font-size: 11px;
+color: var(--sub);
+max-width: 120px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.settings-btn{
+width:32px;
+height:32px;
+border-radius:50%;
+border:none;
+background:var(--input);
+color:var(--accent);
+font-size:16px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:600;
+}
+
+.content-area{padding:16px;flex:1}
+
+.card{
+background:var(--card);
+border:0.5px solid var(--border);
+border-radius:var(--radius);
+padding:16px;
+margin-bottom:16px;
+box-shadow:var(--shadow);
+backdrop-filter:blur(30px) saturate(190%);
+-webkit-backdrop-filter:blur(30px) saturate(190%);
+}
+
+.card-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+}
+
+.item-label{
+font-size:12px;
+font-weight:600;
+color:var(--sub);
+text-transform:uppercase;
+letter-spacing:-0.1px;
+}
+
+.card-delete-btn{
+width:26px;
+height:26px;
+border-radius:50%;
+border:none;
+background:rgba(255,69,58,0.15);
+color:var(--danger);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+font-weight:bold;
+}
+
+.grid-3{display:grid;grid-template-columns:1fr 1fr .8fr;gap:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+
+.input-wrapper{display:flex;flex-direction:column}
+.input-wrapper label{
+font-size:11px;
+font-weight:500;
+color:var(--sub);
+margin:0 0 6px 2px;
+text-transform:uppercase;
+letter-spacing:0.2px;
+}
+
+input,select{
+width:100%;
+height:40px;
+background:var(--input);
+border:none;
+border-radius:10px;
+color:var(--text);
+padding:8px 12px;
+font-size:14px;
+text-align:center;
+outline:none;
+-webkit-appearance:none;
+appearance:none;
+font-weight:400;
+}
+
+input::placeholder{color:var(--sub);opacity:0.7}
+input:focus,select:focus{
+box-shadow:0 0 0 2px var(--accent);
+}
+
+select option{background:#2c2c2e;color:#fff}
+[data-theme="light"] select option{background:#ffffff;color:#000}
+
+.btn-row{display:flex;gap:10px;margin-top:6px}
+
+button{
+cursor:pointer;
+border:none;
+border-radius:12px;
+font-weight:600;
+font-size:14px;
+padding:12px;
+transition:all 0.15s ease;
+}
+
+button:active{transform:scale(0.97);opacity:0.8}
+
+.btn-blue{
+width:48px;
+font-size:20px;
+padding:0;
+color:var(--accent);
+background:var(--input);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.btn-dark{
+background:var(--input);
+color:var(--accent);
+flex:1;
+}
+
+.btn-run{
+width:100%;
+margin-top:14px;
+padding:14px;
+border-radius:14px;
+background:var(--accent);
+color:var(--accentText);
+font-size:15px;
+font-weight:600;
+box-shadow:0 4px 12px rgba(0,122,255,0.3);
+}
+
+.nav-btn{
+background:var(--card);
+border:0.5px solid var(--border);
+border-radius:var(--radius);
+padding:16px;
+margin-bottom:16px;
+box-shadow:var(--shadow);
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+color:var(--text);
+font-size:14px;
+font-weight:600;
+backdrop-filter:blur(30px) saturate(190%);
+-webkit-backdrop-filter:blur(30px) saturate(190%);
+}
+.nav-btn .icon{color:var(--sub);font-size:16px;}
+
+.screen{display:block}.hidden{display:none!important}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+th{
+color:var(--sub);
+border-bottom:0.5px solid var(--border);
+padding:0 0 8px;
+text-align:left;
+font-size:11px;
+font-weight:600;
+text-transform:uppercase;
+letter-spacing:0.2px;
+}
+td{padding:12px 2px;border-bottom:0.5px solid var(--border)}
+.clickable-row{cursor:pointer}
+.clickable-row:active{opacity:0.6}
+.text-right{text-align:right}
+.highlight-qty{color:var(--accent);font-weight:600}
+
+.section-divider{
+  background:rgba(255,255,255,0.05);
+  font-weight:600;
+  color:var(--accent);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+.section-divider td{padding:8px 6px;border-bottom:1px solid var(--border)}
+
+.btn-action-group{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.btn-action{
+background:var(--input);
+border:none;
+color:var(--accent);
+padding:12px;
+border-radius:12px;
+font-size:13px;
+font-weight:500;
+}
+
+.error-msg{color:var(--danger);font-size:12px;margin-top:8px;display:none;font-weight:500}
+
+.tab-header{
+display:flex;
+gap:2px;
+padding:2px;
+background:var(--input);
+border-radius:9px;
+margin-bottom:14px;
+}
+.tab-btn{
+flex:1;
+padding:7px;
+background:transparent;
+color:var(--sub);
+border:none;
+font-size:12px;
+font-weight:500;
+border-radius:7px;
+transition:all 0.2s ease;
+}
+.tab-btn.active{
+color:var(--text);
+background:var(--card2);
+box-shadow:0 2px 6px rgba(0,0,0,0.15);
+font-weight:600;
+}
+
+.swiper-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.swiper-container::-webkit-scrollbar{display:none}
+.swipe-page{flex:0 0 100%;scroll-snap-align:start;width:100%}
+
+.bar-container{
+background:var(--input);
+border-radius:8px;
+height:34px;
+width:100%;
+display:flex;
+overflow:hidden;
+margin-bottom:8px;
+position:relative;
+}
+.bar-piece{
+height:100%;
+background:var(--accent);
+border-right:1px solid rgba(255,255,255,0.2);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:10px;
+color:#fff;
+font-weight:600;
+padding:0 2px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+.bar-waste{
+background:rgba(255,69,58,0.15);
+color:var(--danger);
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:10px;
+flex:1;
+font-weight:500;
+}
+
+.glass-sheet-box {
+  width: 100%;
+  aspect-ratio: 4 / 6;
+  max-height: 420px;
+  background: rgba(120, 120, 128, 0.1);
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.glass-piece-box {
+  position: absolute;
+  background: rgba(10, 132, 255, 0.45);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 14px;
+}
+
+.list-item-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+#settings-screen .card select,#settings-screen .card input, #pricing-screen .card input{text-align:left}
+
+@media(max-width:380px){.content-area{padding:12px}.card{padding:14px}.grid-3{gap:6px}}
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="app-container">
+  
+  <div class="top-bar">
+    <div class="brand-title">Alu Lord</div>
+    <div class="user-status-area">
+      <span class="user-email-text" id="top-bar-user-email">Guest</span>
+      <button class="settings-btn" id="settings-toggle-btn" onclick="openSettings()" title="Settings">⚙</button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- Auth Screen (Login / Register) -->
+    <div id="auth-screen" class="screen">
+      <div class="card">
+        <div class="card-header">
+          <span class="item-label" style="color:var(--accent);">LOGIN / REGISTER</span>
+        </div>
+        <p style="font-size:12px; color:var(--sub); margin-bottom:14px;">
+          Settings နှင့် Pricing များအား Cloud ပေါ်တွင် သိမ်းဆည်းနိုင်ရန် Login ဝင်ပါ။
+        </p>
+        
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label>Email Address</label>
+          <input type="email" id="auth-email" placeholder="example@email.com" style="text-align:left;">
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 16px;">
+          <label>Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" style="text-align:left;">
+        </div>
+
+        <div class="btn-row" style="margin-bottom:10px;">
+          <button class="btn-run" style="margin-top:0; flex:1;" onclick="handleLogin()">Login</button>
+          <button class="btn-dark" style="flex:1;" onclick="handleRegister()">Register</button>
+        </div>
+        
+        <div id="auth-error" style="color:var(--danger); font-size:12px; margin-top:8px; display:none; text-align:center;"></div>
+      </div>
+    </div>
+    
+    <!-- Input Screen -->
+    <div id="input-screen" class="screen hidden">
+      <div id="item-list"></div>
+
+      <div class="btn-row">
+        <button class="btn-blue" onclick="addItem()">+</button>
+        <button class="btn-dark" id="lbl-clear-all" onclick="clearAll()">clear all</button>
+      </div>
+
+      <button class="btn-run" id="lbl-run" onclick="calculateCutList()">run_calculation</button>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="screen hidden">
+      
+      <!-- Account Info Card -->
+      <div class="card" style="border:1px solid var(--accent);">
+        <div class="card-header">
+          <span class="item-label" style="color:var(--accent);">ACCOUNT</span>
+        </div>
+        <div style="font-size:13px; color:var(--text); margin-bottom:10px;" id="account-email-display">
+          Logged in as: Guest
+        </div>
+        <button class="btn-dark" style="width:100%; color:var(--danger);" onclick="handleLogout()">Logout</button>
+      </div>
+
+      <!-- New Menu Button for 728 Pricing -->
+      <button class="nav-btn" onclick="openPricingScreen()">
+        <span id="lbl-pricing-menu" style="text-transform: uppercase; font-size: 13px; color: var(--accent);">728 Pricing Category</span>
+        <span class="icon">➔</span>
+      </button>
+
+      <!-- Basic Settings Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="item-label" id="lbl-settings">SETTINGS</span>
+        </div>
+        
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label id="lbl-unit">measurement unit</label>
+          <select id="global-unit" onchange="convertAllUnits()">
+            <option value="feet">ft / in (fractional)</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label id="lbl-stock">stock bar length</label>
+          <input type="text" id="global-stock-length" value="20'" class="unit-input" onchange="handleInchInput(this)">
+        </div>
+
+        <div class="grid-2" style="margin-top:0; margin-bottom: 12px;">
+          <div class="input-wrapper">
+            <label id="lbl-glass-w">glass sheet width</label>
+            <input type="text" id="global-glass-w" value="4'" class="unit-input" onchange="handleInchInput(this)">
+          </div>
+          <div class="input-wrapper">
+            <label id="lbl-glass-h">glass sheet height</label>
+            <input type="text" id="global-glass-h" value="6'" class="unit-input" onchange="handleInchInput(this)">
+          </div>
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label id="lbl-glass-price" style="color:var(--accent);">glass sheet price (per sheet)</label>
+          <input type="number" id="global-glass-price" value="0" min="0">
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label id="lbl-ws-roll">weatherstrip roll length</label>
+          <input type="text" id="global-ws-roll" value="150'" class="unit-input" onchange="handleInchInput(this)">
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label id="lbl-kerf">saw blade kerf</label>
+          <input type="text" id="global-kerf" value="0" class="unit-input" onchange="handleInchInput(this)">
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 12px;">
+          <label id="lbl-lang">language</label>
+          <select id="global-lang" onchange="toggleLanguage()">
+            <option value="en">English</option>
+            <option value="my">မြန်မာစာ (Burmese)</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper">
+          <label id="lbl-theme">color theme</label>
+          <select id="global-theme" onchange="toggleTheme()">
+            <option value="dark">dark</option>
+            <option value="light">light</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Save Data to Cloud Button -->
+      <button class="btn-run" style="margin-bottom: 12px; background: #34C759;" onclick="saveUserDataToFirestore()">☁ Save Settings & Prices</button>
+
+      <button class="btn-dark" style="width: 100%; padding: 12px;" id="lbl-back" onclick="closeSettings()">&lt; back to main</button>
+    </div>
+
+    <!-- 728 Pricing Screen -->
+    <div id="pricing-screen" class="screen hidden">
+      <div class="card">
+        <button class="btn-dark" style="width: 100%; padding: 10px; margin-bottom: 16px;" id="lbl-pricing-back" onclick="closePricingScreen()">&lt; back to settings</button>
+        
+        <div class="card-header">
+          <span class="item-label" id="lbl-pricing-cat" style="color:var(--accent);">728 PRICING CATEGORY</span>
+        </div>
+        
+        <div style="font-size:11px; color:var(--sub); margin-bottom:14px; margin-top:-6px;" id="lbl-pricing-desc">
+          Enter unit prices to automatically calculate the total estimated cost.
+        </div>
+
+        <div class="input-wrapper" style="margin-bottom: 16px;">
+          <label id="lbl-misc-price" style="color:var(--accent);">LABOR & MISC PRICE (PER SQFT)</label>
+          <input type="number" id="global-misc-price" value="0" min="0">
+        </div>
+
+        <div class="section-divider" style="background:transparent; padding:0; margin-bottom:8px; font-size:11px;" id="lbl-sec-profiles-price">Aluminium Profiles (Price per bar)</div>
+        <div class="grid-2" id="profiles-price-container" style="margin-bottom:16px;"></div>
+
+        <div class="section-divider" style="background:transparent; padding:0; margin-bottom:8px; font-size:11px;" id="lbl-sec-acc-price">Accessories (Price per pc/roll)</div>
+        <div class="grid-2" id="acc-price-container" style="margin-bottom:16px;"></div>
+
+        <!-- Save Data Button inside Pricing screen -->
+        <button class="btn-run" style="background: #34C759;" onclick="saveUserDataToFirestore()">☁ Save Prices</button>
+      </div>
+    </div>
+
+    <!-- Output Screen -->
+    <div id="output-screen" class="screen hidden">
+      <div class="card">
+        <button class="btn-dark" style="width: 100%; margin-bottom: 16px; padding: 10px;" id="lbl-return" onclick="showInput()">&lt; return</button>
+
+        <table>
+          <thead>
+            <tr>
+              <th id="lbl-tbl-item">item</th>
+              <th class="text-right" id="lbl-tbl-bar">qty</th>
+              <th class="text-right" id="lbl-tbl-cost">cost (Ks)</th>
+            </tr>
+          </thead>
+          <tbody id="report-body"></tbody>
+        </table>
+
+        <div class="btn-action-group">
+          <button class="btn-action" id="lbl-opti" onclick="copyOpticutterFormat()">copy for opticutter</button>
+          <button class="btn-action" id="lbl-pdf" onclick="window.print()">print pdf</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Screen -->
+    <div id="detail-screen" class="screen hidden">
+      <div class="card">
+        <button class="btn-dark" style="width: 100%; margin-bottom: 14px; padding: 10px;" id="lbl-detail-back" onclick="showOutput()">&lt; back to report</button>
+        <div class="item-label" id="detail-item-title" style="font-size:14px; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">ITEM DETAIL</div>
+
+        <div class="tab-header">
+          <button class="tab-btn active" id="tab-btn-text" onclick="switchTab(0)">Required List</button>
+          <button class="tab-btn" id="tab-btn-visual" onclick="switchTab(1)">Cutting Diagram</button>
+        </div>
+
+        <div class="swiper-container" id="detail-swiper" onscroll="handleScroll()">
+          <div class="swipe-page" id="page-list"></div>
+          <div class="swipe-page" id="page-diagram"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // FIREBASE INITIALIZATION
+  // ==========================================
+  // 👇 အောက်ပါ firebaseConfig နေရာတွင် မိမိ Console မှ ကူးယူလာသော Config ဖြင့် အစားထိုးပါ
+  const firebaseConfig = {
+    apiKey: "AIzaSyCr1nQWmuMLZCLEzuZvwIknIarTKhPhVw8",
+  authDomain: "alu-lord.firebaseapp.com",
+  projectId: "alu-lord",
+  storageBucket: "alu-lord.firebasestorage.app",
+  messagingSenderId: "1039089681865",
+  appId: "1:1039089681865:web:ddca2f0ed0535a8852d418",
+  measurementId: "G-4005X3C2QS"
+
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let currentUser = null;
+
+  // Listen for Authentication State
+  auth.onAuthStateChanged(user => {
+    const emailDisplay = document.getElementById('top-bar-user-email');
+    const accEmailDisplay = document.getElementById('account-email-display');
+
+    if (user) {
+      currentUser = user;
+      emailDisplay.innerText = user.email;
+      accEmailDisplay.innerText = "Logged in as: " + user.email;
+      
+      // Load user settings from Firestore
+      loadUserDataFromFirestore(user.uid);
+
+      // Hide Auth Screen and Show Main Input Screen
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('input-screen').classList.remove('hidden');
+    } else {
+      currentUser = null;
+      emailDisplay.innerText = "Guest";
+      accEmailDisplay.innerText = "Logged in as: Guest";
+
+      // Show Auth Screen
+      document.getElementById('auth-screen').classList.remove('hidden');
+      document.getElementById('input-screen').classList.add('hidden');
+      document.getElementById('settings-screen').classList.add('hidden');
+      document.getElementById('pricing-screen').classList.add('hidden');
+      document.getElementById('output-screen').classList.add('hidden');
+      document.getElementById('detail-screen').classList.add('hidden');
+    }
+  });
+
+  function handleLogin() {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value.trim();
+    const errEl = document.getElementById('auth-error');
+
+    errEl.style.display = 'none';
+    if (!email || !password) {
+      errEl.innerText = "Email နှင့် Password ထည့်သွင်းပေးပါ။";
+      errEl.style.display = 'block';
+      return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+      .catch(error => {
+        errEl.innerText = error.message;
+        errEl.style.display = 'block';
+      });
+  }
+
+  function handleRegister() {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value.trim();
+    const errEl = document.getElementById('auth-error');
+
+    errEl.style.display = 'none';
+    if (!email || !password) {
+      errEl.innerText = "Email နှင့် Password ထည့်သွင်းပေးပါ။";
+      errEl.style.display = 'block';
+      return;
+    }
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .catch(error => {
+        errEl.innerText = error.message;
+        errEl.style.display = 'block';
+      });
+  }
+
+  function handleLogout() {
+    auth.signOut();
+  }
+
+  // ==========================================
+  // FIRESTORE SAVE & LOAD
+  // ==========================================
+  function saveUserDataToFirestore() {
+    if (!currentUser) {
+      alert("Login ဝင်ထားခြင်း မရှိပါ။");
+      return;
+    }
+
+    const pricingObj = {};
+    profileItemsList.forEach(item => {
+      const el = document.getElementById('price-' + item.replace(/[^a-zA-Z]/g, ''));
+      if (el) pricingObj[item] = parseFloat(el.value) || 0;
+    });
+    accItemsList.forEach(item => {
+      const el = document.getElementById('price-' + item.replace(/[^a-zA-Z]/g, ''));
+      if (el) pricingObj[item] = parseFloat(el.value) || 0;
+    });
+
+    const settingsData = {
+      unit: document.getElementById('global-unit').value,
+      stockLength: document.getElementById('global-stock-length').value,
+      glassW: document.getElementById('global-glass-w').value,
+      glassH: document.getElementById('global-glass-h').value,
+      glassPrice: parseFloat(document.getElementById('global-glass-price').value) || 0,
+      wsRoll: document.getElementById('global-ws-roll').value,
+      kerf: document.getElementById('global-kerf').value,
+      lang: document.getElementById('global-lang').value,
+      theme: document.getElementById('global-theme').value,
+      miscPrice: parseFloat(document.getElementById('global-misc-price').value) || 0,
+      pricing: pricingObj,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('users').doc(currentUser.uid).set(settingsData, { merge: true })
+      .then(() => {
+        alert("✅ Settings & Prices များကို Cloud ပေါ်တွင် အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။");
+      })
+      .catch(err => {
+        alert("❌ သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိပါသည်: " + err.message);
+      });
+  }
+
+  function loadUserDataFromFirestore(uid) {
+    db.collection('users').doc(uid).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+
+        if (data.unit) document.getElementById('global-unit').value = data.unit;
+        if (data.stockLength) document.getElementById('global-stock-length').value = data.stockLength;
+        if (data.glassW) document.getElementById('global-glass-w').value = data.glassW;
+        if (data.glassH) document.getElementById('global-glass-h').value = data.glassH;
+        if (data.glassPrice !== undefined) document.getElementById('global-glass-price').value = data.glassPrice;
+        if (data.wsRoll) document.getElementById('global-ws-roll').value = data.wsRoll;
+        if (data.kerf) document.getElementById('global-kerf').value = data.kerf;
+        if (data.lang) document.getElementById('global-lang').value = data.lang;
+        if (data.theme) document.getElementById('global-theme').value = data.theme;
+        if (data.miscPrice !== undefined) document.getElementById('global-misc-price').value = data.miscPrice;
+
+        if (data.pricing) {
+          for (let itemKey in data.pricing) {
+            const el = document.getElementById('price-' + itemKey.replace(/[^a-zA-Z]/g, ''));
+            if (el) el.value = data.pricing[itemKey];
+          }
+        }
+
+        toggleLanguage();
+        toggleTheme();
+      }
+    }).catch(err => {
+      console.error("Error loading user data:", err);
+    });
+  }
+
+  // ==========================================
+  // APP LOGIC
+  // ==========================================
+  let itemCount = 0;
+  let currentUnit = 'feet';
+  let currentLang = 'en';
+  let BAR_LENGTH_INCHES = 240;
+
+  let calculatedProfileData = {};
+  let calculatedAccessoriesData = {};
+
+  const profileItemsList = ['top frame', 'btm frame', 'side frame', 'lock frame', 'hook frame', 'wheel frame', 'fixed frame', 'fixed middle frame', 'side fixed close (inner)', 'side fixed close (outer)', 'fixed click', 'meeting stile'];
+  const accItemsList = ['top cap', 'bot cap', 'wheel', 'hook lock', 'weatherstrip'];
+
+  const i18n = {
+    en: {
+      settings: "SETTINGS", unit: "measurement unit", kerf: "saw blade kerf",
+      lang: "language", theme: "color theme", stock: "stock bar length",
+      glassW: "glass sheet width", glassH: "glass sheet height", wsRoll: "weatherstrip roll length",
+      glassPrice: "glass sheet price (per sheet)", pricingMenu: "728 Pricing Category",
+      pricingCat: "728 PRICING CATEGORY", pricingBack: "< back to settings",
+      pricingDesc: "Enter unit prices to automatically calculate the total estimated cost.",
+      miscPrice: "LABOR & MISC PRICE (PER SQFT)",
+      secProfilesPrice: "Aluminium Profiles (Price per bar)", secAccPrice: "Accessories (Price per pc/roll)",
+      back: "< back to main", return: "< return",
+      tblItem: "item", tblBar: "qty", tblCost: "cost (Ks)", grandTotal: "Grand Total", perSqft: "Price Per Sqft",
+      opti: "copy for opticutter", pdf: "print pdf",
+      clearAll: "clear all", run: "run_calculation", backReport: "< back to report",
+      listTab: "Required List", diagramTab: "Cutting Diagram", windowItem: "WINDOW ITEM",
+      errFixed: "Fixed Height (Top + Bot) is equal or greater than Total Height!",
+      errEmpty: "Please enter valid dimensions and quantities.",
+      secProfiles: "Aluminium Profiles", secGlass: "Glass Sheets", secAcc: "Accessories",
+      secMisc: "Labor & Miscellaneous", totalArea: "Total Area & Misc"
+    },
+    my: {
+      settings: "ဆက်တင်များ", unit: "တိုင်းတာသည့် ယူနစ်", kerf: "လွှသွားစာ အလေအလွင့် (Kerf)",
+      lang: "ဘာသာစကား", theme: "အပြင်အဆင် ဒီဇိုင်း", stock: "ကုန်ကြမ်းအချောင်းအရှည်",
+      glassW: "မှန်အချပ်ကြီး အနံ (Width)", glassH: "မှန်အချပ်ကြီး အမြင့် (Height)", wsRoll: "ရော်ဘာကြိုး အခွေအရှည်",
+      glassPrice: "မှန်တစ်ချပ်စာ ဈေးနှုန်း", pricingMenu: "728 ဈေးနှုန်းများ ပြင်ဆင်ရန်",
+      pricingCat: "728 PRICING (ဈေးနှုန်းသတ်မှတ်ရန်)", pricingBack: "< ဆက်တင်သို့ ပြန်သွားမည်",
+      pricingDesc: "ကုန်ကျစရိတ် တွက်ချက်နိုင်ရန် ပစ္စည်းတစ်ခုချင်းစီ၏ ဈေးနှုန်းများကို ထည့်သွင်းပေးပါ။",
+      miscPrice: "ကော်/စကူ/လုပ်အားခ (၁ စတုရန်းပေ ဈေး)",
+      secProfilesPrice: "အလူမီနံ အချောင်းများ (တစ်ချောင်းစာ ဈေး)", secAccPrice: "Accessories များ (တစ်ခု/တစ်ခွေစာ ဈေး)",
+      back: "< ပင်မစာမျက်နှာသို့", return: "< ပြန်ထွက်မည်",
+      tblItem: "အမျိုးအစား", tblBar: "အရေအတွက်", tblCost: "ကျသင့်ငွေ (Ks)", grandTotal: "စုစုပေါင်း ကျသင့်ငွေ", perSqft: "၁ စတုရန်းပေ ဈေးနှုန်း",
+      opti: "OptiCutter အတွက် ကူးယူမည်", pdf: "PDF ထုတ်မည်",
+      clearAll: "အားလုံးဖျက်မည်", run: "တွက်ချက်မည်", backReport: "< စာရင်းသို့ ပြန်သွားမည်",
+      listTab: "ဖြတ်ရမည့် အရွယ်အစားများ", diagramTab: "ဖြတ်ပိုင်းပုံစံ (Diagram)", windowItem: "တံခါး / ပြတင်းပေါက်",
+      errFixed: "မှန်သေအမြင့် ပေါင်းလဒ်သည် တံခါး/ပြတင်းပေါက် အမြင့်ထက် ညီနေ သို့မဟုတ် ကျော်လွန်နေပါသည်။",
+      errEmpty: "တွက်ချက်ရန် အတိုင်းအတာနှင့် အရေအတွက်များကို ပြည့်စုံစွာ ထည့်ပါ။",
+      secProfiles: "အလူမီနီယံ အချောင်းများ", secGlass: "မှန်အချပ်များ", secAcc: "Accessories ပစ္စည်းများ",
+      secMisc: "လုပ်အားခ နှင့် အထွေထွေ", totalArea: "စုစုပေါင်း အကျယ်အဝန်း (Total Sqft)"
+    }
+  };
+
+  function initPricingInputs() {
+    const pContainer = document.getElementById('profiles-price-container');
+    pContainer.innerHTML = '';
+    profileItemsList.forEach(item => {
+      pContainer.innerHTML += `
+        <div class="input-wrapper">
+          <label>${item.toUpperCase()}</label>
+          <input type="number" id="price-${item.replace(/[^a-zA-Z]/g, '')}" value="0" min="0">
+        </div>
+      `;
+    });
+    const aContainer = document.getElementById('acc-price-container');
+    aContainer.innerHTML = '';
+    accItemsList.forEach(item => {
+      aContainer.innerHTML += `
+        <div class="input-wrapper">
+          <label>${item.toUpperCase()}</label>
+          <input type="number" id="price-${item.replace(/[^a-zA-Z]/g, '')}" value="0" min="0">
+        </div>
+      `;
+    });
+  }
+
+  function getPrice(itemName) {
+    if (itemName === 'glass') return parseFloat(document.getElementById('global-glass-price').value) || 0;
+    const id = 'price-' + itemName.replace(/[^a-zA-Z]/g, '');
+    const el = document.getElementById(id);
+    return el ? (parseFloat(el.value) || 0) : 0;
+  }
+
+  function toggleLanguage() {
+    currentLang = document.getElementById('global-lang').value;
+    const t = i18n[currentLang];
+
+    document.getElementById('lbl-settings').innerText = t.settings;
+    document.getElementById('lbl-unit').innerText = t.unit;
+    document.getElementById('lbl-kerf').innerText = t.kerf;
+    document.getElementById('lbl-lang').innerText = t.lang;
+    document.getElementById('lbl-theme').innerText = t.theme;
+    document.getElementById('lbl-stock').innerText = t.stock;
+    document.getElementById('lbl-glass-w').innerText = t.glassW;
+    document.getElementById('lbl-glass-h').innerText = t.glassH;
+    document.getElementById('lbl-ws-roll').innerText = t.wsRoll;
+    
+    document.getElementById('lbl-glass-price').innerText = t.glassPrice;
+    document.getElementById('lbl-pricing-menu').innerText = t.pricingMenu;
+    document.getElementById('lbl-pricing-cat').innerText = t.pricingCat;
+    document.getElementById('lbl-pricing-back').innerText = t.pricingBack;
+    document.getElementById('lbl-pricing-desc').innerText = t.pricingDesc;
+    document.getElementById('lbl-misc-price').innerText = t.miscPrice;
+    document.getElementById('lbl-sec-profiles-price').innerText = t.secProfilesPrice;
+    document.getElementById('lbl-sec-acc-price').innerText = t.secAccPrice;
+
+    document.getElementById('lbl-back').innerText = t.back;
+    document.getElementById('lbl-return').innerText = t.return;
+    document.getElementById('lbl-tbl-item').innerText = t.tblItem;
+    document.getElementById('lbl-tbl-bar').innerText = t.tblBar;
+    document.getElementById('lbl-tbl-cost').innerText = t.tblCost;
+    
+    let gTotalEl = document.getElementById('lbl-grand-total');
+    if (gTotalEl) gTotalEl.innerText = t.grandTotal;
+
+    let perSqftEl = document.getElementById('lbl-per-sqft');
+    if (perSqftEl) perSqftEl.innerText = t.perSqft;
+
+    document.getElementById('lbl-opti').innerText = t.opti;
+    document.getElementById('lbl-pdf').innerText = t.pdf;
+    document.getElementById('lbl-clear-all').innerText = t.clearAll;
+    document.getElementById('lbl-run').innerText = t.run;
+    document.getElementById('lbl-detail-back').innerText = t.backReport;
+    document.getElementById('tab-btn-text').innerText = t.listTab;
+    document.getElementById('tab-btn-visual').innerText = t.diagramTab;
+
+    document.querySelectorAll('.item-label-text').forEach(el => el.innerText = t.windowItem);
+  }
+
+  function openSettings() {
+    document.getElementById('input-screen').classList.add('hidden');
+    document.getElementById('output-screen').classList.add('hidden');
+    document.getElementById('detail-screen').classList.add('hidden');
+    document.getElementById('pricing-screen').classList.add('hidden');
+    document.getElementById('settings-screen').classList.remove('hidden');
+    document.getElementById('settings-toggle-btn').classList.add('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function closeSettings() {
+    document.getElementById('settings-screen').classList.add('hidden');
+    document.getElementById('input-screen').classList.remove('hidden');
+    document.getElementById('settings-toggle-btn').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function openPricingScreen() {
+    document.getElementById('settings-screen').classList.add('hidden');
+    document.getElementById('pricing-screen').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function closePricingScreen() {
+    document.getElementById('pricing-screen').classList.add('hidden');
+    document.getElementById('settings-screen').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function toggleTheme() {
+    const theme = document.getElementById('global-theme').value;
+    document.body.setAttribute('data-theme', theme);
+  }
+
+  function formatFeetInches(totalInches) {
+    if (totalInches == null || isNaN(totalInches)) return '';
+    totalInches = Math.max(0, Number(totalInches));
+
+    let sixteenths = Math.round(totalInches * 16);
+    let feet = Math.floor(sixteenths / 192);
+    let rem16 = sixteenths - feet * 192;
+    let wholeInches = Math.floor(rem16 / 16);
+    let frac16 = rem16 % 16;
+
+    const fracMap = {
+      1:'1/16', 2:'1/8', 3:'3/16', 4:'1/4',
+      5:'5/16', 6:'3/8', 7:'7/16', 8:'1/2',
+      9:'9/16', 10:'5/8', 11:'11/16', 12:'3/4',
+      13:'13/16', 14:'7/8', 15:'15/16'
+    };
+
+    let out = '';
+    if (feet > 0) out += feet + "'";
+    if (wholeInches > 0 || frac16 > 0) {
+      if (out) out += '-';
+      out += wholeInches;
+      if (frac16 > 0) out += ' ' + fracMap[frac16];
+      out += '"';
+    }
+    return out || (totalInches === 0 ? '0"' : '');
+  }
+
+  function parseFraction(str) {
+    str = String(str || '').trim();
+    if (!str) return 0;
+    if (str.includes('/')) {
+      const p = str.split('/');
+      const a = parseFloat(p[0]), b = parseFloat(p[1]);
+      if (isFinite(a) && isFinite(b) && b !== 0) return a / b;
+      return 0;
+    }
+    const n = parseFloat(str);
+    return isFinite(n) ? n : 0;
+  }
+
+  function parseToInches(valStr, unit = currentUnit) {
+    if (valStr == null || String(valStr).trim() === '') return 0;
+    let s = String(valStr).trim().toLowerCase().replace(/,/g, '');
+
+    if (unit === 'mm') {
+      const n = parseFloat(s.replace(/mm/g, '').trim());
+      return isFinite(n) ? n / 25.4 : 0;
+    }
+
+    let total = 0;
+    const feetMatch = s.match(/^\s*(-?\d+(?:\.\d+)?)\s*'/);
+    if (feetMatch) {
+      total += parseFloat(feetMatch[1]) * 12;
+      s = s.slice(feetMatch[0].length).trim();
+    }
+
+    s = s.replace(/"/g, '').replace(/-/g, ' ').trim();
+    if (s) {
+      const parts = s.split(/\s+/);
+      total += parseFloat(parts[0]) || 0;
+      if (parts[1]) total += parseFraction(parts[1]);
+    }
+    return Math.max(0, total);
+  }
+
+  function displayLength(inches) {
+    if (inches === 0) return '0';
+    return currentUnit === 'mm'
+      ? (Math.round(inches * 25.4 * 100) / 100) + ' mm'
+      : formatFeetInches(inches);
+  }
+
+  function handleInchInput(input) {
+    if (!input.value || input.value.trim() === '') {
+      delete input.dataset.inches;
+      return;
+    }
+    const inches = parseToInches(input.value, currentUnit);
+    input.dataset.inches = String(inches);
+    input.value = displayLength(inches);
+  }
+
+  function convertAllUnits() {
+    const newUnit = document.getElementById('global-unit').value;
+    if (newUnit === currentUnit) return;
+
+    document.querySelectorAll('.unit-input').forEach(field => {
+      let inches = parseFloat(field.dataset.inches);
+      if (isNaN(inches) || !field.dataset.inches) {
+        inches = parseToInches(field.value, currentUnit);
+      }
+      
+      if (!isNaN(inches) && inches >= 0) {
+        field.dataset.inches = String(inches);
+        if (newUnit === 'mm') {
+          field.value = (Math.round(inches * 25.4 * 100) / 100) + ' mm';
+        } else {
+          field.value = formatFeetInches(inches);
+        }
+      }
+    });
+
+    currentUnit = newUnit;
+  }
+
+  function getKerfInches() {
+    const input = document.getElementById('global-kerf');
+    let inches = parseFloat(input.dataset.inches);
+    if (isNaN(inches)) {
+      inches = parseToInches(input.value || 0, currentUnit);
+    }
+    return isNaN(inches) ? 0 : inches;
+  }
+
+  function addItem() {
+    const itemList = document.getElementById('item-list');
+    const itemId = `item-${itemCount}`;
+    const newItem = document.createElement('div');
+    newItem.className = 'card';
+    newItem.id = itemId;
+    newItem.innerHTML = `
+      <div class="card-header">
+        <span class="item-label item-label-text">${i18n[currentLang].windowItem}</span>
+        <button class="card-delete-btn" onclick="deleteItem('${itemId}')">✕</button>
+      </div>
+      <div class="grid-3">
+        <div class="input-wrapper"><label>h</label><input type="text" class="door-h unit-input" placeholder="-" onchange="handleInchInput(this)"></div>
+        <div class="input-wrapper"><label>w</label><input type="text" class="door-w unit-input" placeholder="-" onchange="handleInchInput(this)"></div>
+        <div class="input-wrapper"><label>qty</label><input type="number" class="door-qty" placeholder="-"></div>
+      </div>
+      <div class="input-wrapper" style="margin-top: 10px;">
+        <label>slide type</label>
+        <select class="slide-type">
+          <option value="2">2-slide</option>
+          <option value="4">4-slide</option>
+        </select>
+      </div>
+      <div class="grid-2">
+        <div class="input-wrapper"><label>top fixed</label><input type="text" class="top-fixed unit-input" placeholder="-" onchange="handleInchInput(this)"></div>
+        <div class="input-wrapper"><label>bot fixed</label><input type="text" class="bot-fixed unit-input" placeholder="-" onchange="handleInchInput(this)"></div>
+      </div>
+      <div class="error-msg">${i18n[currentLang].errFixed}</div>
+    `;
+    itemList.appendChild(newItem);
+    itemCount++;
+  }
+
+  function deleteItem(id) {
+    const element = document.getElementById(id);
+    if (element) element.remove();
+  }
+
+  function clearAll() {
+    document.getElementById('item-list').innerHTML = '';
+    itemCount = 0;
+    addItem();
+  }
+
+  function showInput() {
+    document.getElementById('input-screen').classList.remove('hidden');
+    document.getElementById('output-screen').classList.add('hidden');
+    document.getElementById('detail-screen').classList.add('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function showOutput() {
+    document.getElementById('detail-screen').classList.add('hidden');
+    document.getElementById('output-screen').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function calculate1DStockBars(cutLengths, kerf) {
+    if (cutLengths.length === 0) return { barCount: 0, bins: [], costingQty: 0 };
+    
+    let sortedCuts = [...cutLengths].sort((a, b) => b - a);
+    let bins = [];
+
+    for (let length of sortedCuts) {
+      let cutLengthWithKerf = length + kerf;
+      let placed = false;
+
+      for (let i = 0; i < bins.length; i++) {
+        if (bins[i].rem >= cutLengthWithKerf) {
+          bins[i].cuts.push(length);
+          bins[i].rem -= cutLengthWithKerf;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        if (cutLengthWithKerf > BAR_LENGTH_INCHES + 1e-9) {
+          bins.push({ cuts: [length], rem: 0, oversized: true });
+        } else {
+          bins.push({
+            cuts: [length],
+            rem: BAR_LENGTH_INCHES - cutLengthWithKerf
+          });
+        }
+      }
+    }
+
+    let costingQty = 0;
+    if (bins.length > 0) {
+      let fullBars = bins.length - 1;
+      let lastBin = bins[bins.length - 1];
+      let usedInches = BAR_LENGTH_INCHES - lastBin.rem;
+      let usedFt = usedInches / 12;
+
+      let fraction = 0;
+      if (usedFt > 0 && usedFt <= 1) fraction = 0.05;
+      else if (usedFt > 1 && usedFt <= 2) fraction = 0.1;
+      else if (usedFt > 2 && usedFt <= 3) fraction = 0.166;
+      else if (usedFt > 3 && usedFt <= 4) fraction = 0.2;
+      else if (usedFt > 4 && usedFt <= 5) fraction = 0.25;
+      else if (usedFt > 5 && usedFt <= 6.5) fraction = 0.333;
+      else if (usedFt > 6.5 && usedFt <= 10) fraction = 0.5;
+      else if (usedFt > 10 && usedFt <= 12) fraction = 0.666;
+      else if (usedFt > 12) fraction = 1;
+
+      costingQty = Math.round((fullBars + fraction) * 1000) / 1000;
+    }
+
+    return { barCount: bins.length, bins: bins, costingQty: costingQty };
+  }
+
+  function calculateGlassSheets(glassPieces, sheetW, sheetH) {
+    if (!glassPieces || glassPieces.length === 0) return { sheetCount: 0, layouts: [], costingQty: 0 };
+
+    let oversizedList = [];
+    let validPieces = [];
+
+    glassPieces.forEach(p => {
+      let fitNormal = (p.w <= sheetW && p.h <= sheetH);
+      let fitRotated = (p.w <= sheetH && p.h <= sheetW);
+
+      if (!fitNormal && !fitRotated) {
+        oversizedList.push(`${displayLength(p.w)} x ${displayLength(p.h)}`);
+      } else {
+        validPieces.push(p);
+      }
+    });
+
+    if (oversizedList.length > 0) {
+      alert(`⚠️ Oversized Glass Warning:\nအောက်ပါ မှန်စများသည် Stock Sheet (${displayLength(sheetW)} x ${displayLength(sheetH)}) ထက် ကြီးနေပါသည် -\n\n` + [...new Set(oversizedList)].join('\n'));
+    }
+
+    if (validPieces.length === 0) return { sheetCount: 0, layouts: [], costingQty: 0 };
+
+    let itemsToPlace = validPieces.map(p => ({
+      w: p.w,
+      h: p.h,
+      area: p.w * p.h,
+      label: `${displayLength(p.w)} x ${displayLength(p.h)}`
+    }));
+
+    itemsToPlace.sort((a, b) => b.area - a.area);
+
+    let rawSheets = [];
+
+    itemsToPlace.forEach(item => {
+      let placed = false;
+
+      for (let sheet of rawSheets) {
+        let bestSpaceIndex = -1;
+        let bestOrient = null;
+
+        for (let i = 0; i < sheet.freeSpaces.length; i++) {
+          let space = sheet.freeSpaces[i];
+
+          if (item.w <= space.w && item.h <= space.h) {
+            bestSpaceIndex = i;
+            bestOrient = { w: item.w, h: item.h };
+            break;
+          } else if (item.h <= space.w && item.w <= space.h) {
+            bestSpaceIndex = i;
+            bestOrient = { w: item.h, h: item.w };
+            break;
+          }
+        }
+
+        if (bestSpaceIndex !== -1) {
+          let space = sheet.freeSpaces[bestSpaceIndex];
+          sheet.pieces.push({
+            ...item,
+            x: space.x,
+            y: space.y,
+            placedW: bestOrient.w,
+            placedH: bestOrient.h
+          });
+
+          let rightSpace = { x: space.x + bestOrient.w, y: space.y, w: space.w - bestOrient.w, h: bestOrient.h };
+          let bottomSpace = { x: space.x, y: space.y + bestOrient.h, w: space.w, h: space.h - bestOrient.h };
+
+          sheet.freeSpaces.splice(bestSpaceIndex, 1);
+          if (rightSpace.w > 0.01 && rightSpace.h > 0.01) sheet.freeSpaces.push(rightSpace);
+          if (bottomSpace.w > 0.01 && bottomSpace.h > 0.01) sheet.freeSpaces.push(bottomSpace);
+
+          sheet.freeSpaces.sort((a, b) => (a.w * a.h) - (b.w * b.h));
+          placed = true;
+          break;
+        }
+      }
+
+      if (!placed) {
+        let useW = item.w;
+        let useH = item.h;
+
+        if (item.w > sheetW || item.h > sheetH) { useW = item.h; useH = item.w; }
+
+        let newSheet = {
+          w: sheetW, h: sheetH,
+          pieces: [{ ...item, x: 0, y: 0, placedW: useW, placedH: useH }],
+          freeSpaces: []
+        };
+
+        if (sheetW - useW > 0.01) newSheet.freeSpaces.push({ x: useW, y: 0, w: sheetW - useW, h: useH });
+        if (sheetH - useH > 0.01) newSheet.freeSpaces.push({ x: 0, y: useH, w: sheetW, h: sheetH - useH });
+
+        rawSheets.push(newSheet);
+      }
+    });
+
+    let layouts = [];
+    rawSheets.forEach(sheet => {
+      let layoutSig = JSON.stringify(sheet.pieces.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)},${p.placedW.toFixed(1)},${p.placedH.toFixed(1)}`).sort());
+      let existing = layouts.find(l => l.sig === layoutSig);
+      if (existing) {
+        existing.repetition++;
+      } else {
+        layouts.push({ sig: layoutSig, repetition: 1, sheet: sheet });
+      }
+    });
+
+    let costingQty = 0;
+    if (rawSheets.length > 0) {
+      let fullSheets = rawSheets.length - 1;
+      let lastSheet = rawSheets[rawSheets.length - 1];
+      let usedArea = 0;
+      lastSheet.pieces.forEach(p => { usedArea += (p.placedW * p.placedH); });
+      let sheetArea = sheetW * sheetH;
+      let ratio = sheetArea > 0 ? (usedArea / sheetArea) : 0;
+
+      let fraction = (ratio <= 0.5) ? 0.5 : 1;
+      costingQty = fullSheets + fraction;
+    }
+
+    return { sheetCount: rawSheets.length, layouts: layouts, costingQty: costingQty };
+  }
+
+  function calculateCutList() {
+    const items = document.querySelectorAll('#item-list .card');
+    const kerf = getKerfInches();
+    
+    const stockInput = document.getElementById('global-stock-length');
+    let stockInches = parseFloat(stockInput.dataset.inches);
+    if (isNaN(stockInches)) stockInches = parseToInches(stockInput.value, currentUnit);
+
+    BAR_LENGTH_INCHES = stockInches;
+
+    if (!BAR_LENGTH_INCHES || BAR_LENGTH_INCHES <= 0) {
+      alert(currentLang === 'my' ? 'Stock bar length မှန်ကန်စွာ ထည့်ပါ။' : 'Enter a valid stock bar length.');
+      return;
+    }
+
+    const glassWInput = document.getElementById('global-glass-w');
+    let glassW = parseFloat(glassWInput.dataset.inches) || parseToInches(glassWInput.value, currentUnit);
+
+    const glassHInput = document.getElementById('global-glass-h');
+    let glassH = parseFloat(glassHInput.dataset.inches) || parseToInches(glassHInput.value, currentUnit);
+
+    const wsRollInput = document.getElementById('global-ws-roll');
+    let wsRollInches = parseFloat(wsRollInput.dataset.inches) || parseToInches(wsRollInput.value, currentUnit);
+    let wsRollFt = wsRollInches > 0 ? (wsRollInches / 12) : 150;
+
+    let hasValidationError = false;
+    let validItemFound = false;
+    let totalGrandCost = 0;
+    let totalSqft = 0;
+
+    calculatedProfileData = {
+      'top frame': [], 'btm frame': [], 'side frame': [], 'lock frame': [],
+      'hook frame': [], 'wheel frame': [], 'fixed frame': [], 'fixed middle frame': [],
+      'side fixed close (inner)': [], 'side fixed close (outer)': [], 'fixed click': [], 'meeting stile': [], 'glass': []
+    };
+
+    calculatedAccessoriesData = {
+      topCap: 0, botCap: 0, wheel: 0, hookLock: 0, weatherstripFt: 0, wsRollFt: wsRollFt
+    };
+
+    items.forEach(item => {
+      const errorMsg = item.querySelector('.error-msg');
+      errorMsg.style.display = 'none';
+
+      let hInput = item.querySelector('.door-h');
+      let h = parseFloat(hInput.dataset.inches) || parseToInches(hInput.value, currentUnit) || 0;
+
+      let wInput = item.querySelector('.door-w');
+      let w = parseFloat(wInput.dataset.inches) || parseToInches(wInput.value, currentUnit) || 0;
+
+      let qty = parseInt(item.querySelector('.door-qty').value) || 0;
+
+      if (!qty || qty <= 0 || !h || h <= 0 || !w || w <= 0) return;
+
+      validItemFound = true;
+
+      let slide = parseInt(item.querySelector('.slide-type').value);
+
+      let topInput = item.querySelector('.top-fixed');
+      let topFixed = parseFloat(topInput.dataset.inches) || parseToInches(topInput.value, currentUnit) || 0;
+
+      let botInput = item.querySelector('.bot-fixed');
+      let botFixed = parseFloat(botInput.dataset.inches) || parseToInches(botInput.value, currentUnit) || 0;
+
+      if ((topFixed + botFixed) >= h) {
+        errorMsg.style.display = 'block';
+        hasValidationError = true;
+        return;
+      }
+
+      let itemSqft = (w * h) / 144;
+      totalSqft += (itemSqft * qty);
+
+      let panelW = slide === 2 ? w / 2 : w / 4;
+      let doorH = h - (topFixed + botFixed);
+
+      let panels = slide;
+      calculatedAccessoriesData.topCap += panels * 2 * qty;
+      calculatedAccessoriesData.botCap += panels * 2 * qty;
+      calculatedAccessoriesData.wheel += panels * 2 * qty;
+
+      if (slide === 2) calculatedAccessoriesData.hookLock += 2 * qty;
+      else if (slide === 4) calculatedAccessoriesData.hookLock += 3 * qty;
+
+      let lockStileFt = doorH / 12;
+      calculatedAccessoriesData.weatherstripFt += (lockStileFt * 2 * qty);
+
+      for (let i = 0; i < qty; i++) {
+        calculatedProfileData['top frame'].push(w);
+        calculatedProfileData['btm frame'].push(w);
+        calculatedProfileData['side frame'].push(h, h);
+
+        let leafCount = slide;
+        for (let j = 0; j < leafCount; j++) {
+          calculatedProfileData['lock frame'].push(doorH);
+          calculatedProfileData['hook frame'].push(doorH);
+          calculatedProfileData['wheel frame'].push(panelW, panelW);
+          calculatedProfileData['glass'].push({ w: panelW, h: doorH });
+        }
+
+        if (slide === 4) {
+          calculatedProfileData['meeting stile'].push(doorH);
+        }
+
+        let hasTop = topFixed > 0;
+        let hasBot = botFixed > 0;
+
+        if (hasTop) {
+          for (let g = 0; g < slide; g++) calculatedProfileData['glass'].push({ w: panelW, h: topFixed });
+        }
+        if (hasBot) {
+          for (let g = 0; g < slide; g++) calculatedProfileData['glass'].push({ w: panelW, h: botFixed });
+        }
+
+        let fixedCount = (hasTop ? 1 : 0) + (hasBot ? 1 : 0);
+        if (fixedCount > 0) {
+          for(let f=0; f<fixedCount; f++) calculatedProfileData['fixed frame'].push(w);
+
+          let midQty = slide === 2 ? 1 : 2;
+          if (hasTop) for(let m=0; m<midQty; m++) calculatedProfileData['fixed middle frame'].push(topFixed);
+          if (hasBot) for(let m=0; m<midQty; m++) calculatedProfileData['fixed middle frame'].push(botFixed);
+
+          if (hasTop) calculatedProfileData['side fixed close (inner)'].push(topFixed, topFixed);
+          if (hasBot) calculatedProfileData['side fixed close (inner)'].push(botFixed, botFixed);
+          if (hasBot) calculatedProfileData['side fixed close (outer)'].push(w);
+
+          let clickQtyH = slide === 2 ? 4 : 8;
+          let clickQtyW = slide === 2 ? 4 : 8;
+          if (hasTop) {
+            for(let c=0; c<clickQtyH; c++) calculatedProfileData['fixed click'].push(topFixed);
+            for(let c=0; c<clickQtyW; c++) calculatedProfileData['fixed click'].push(panelW);
+          }
+          if (hasBot) {
+            for(let c=0; c<clickQtyH; c++) calculatedProfileData['fixed click'].push(botFixed);
+            for(let c=0; c<clickQtyW; c++) calculatedProfileData['fixed click'].push(panelW);
+          }
+        }
+      }
+    });
+
+    if (hasValidationError) {
+      alert(i18n[currentLang].errFixed);
+      return;
+    }
+
+    if (!validItemFound) {
+      alert(i18n[currentLang].errEmpty);
+      return;
+    }
+
+    const tbody = document.getElementById('report-body');
+    tbody.innerHTML = '';
+
+    // Section 1: Profiles
+    tbody.innerHTML += `<tr class="section-divider"><td colspan="3">${i18n[currentLang].secProfiles}</td></tr>`;
+    for (let profile in calculatedProfileData) {
+      if (profile === 'glass') continue;
+      let itemsList = calculatedProfileData[profile];
+      if (itemsList.length > 0) {
+        let result = calculate1DStockBars(itemsList, kerf);
+        let rawCost = result.costingQty * getPrice(profile);
+        let roundedCost = Math.ceil(rawCost / 100) * 100;
+        totalGrandCost += roundedCost;
+
+        tbody.innerHTML += `
+          <tr class="clickable-row" onclick="openItemDetail('${profile}')">
+            <td>${profile} ➔</td>
+            <td class="text-right highlight-qty">${result.costingQty} bar</td>
+            <td class="text-right">${roundedCost > 0 ? roundedCost.toLocaleString() : '-'}</td>
+          </tr>
+        `;
+      }
+    }
+
+    // Section 2: Glass
+    tbody.innerHTML += `<tr class="section-divider"><td colspan="3">${i18n[currentLang].secGlass}</td></tr>`;
+    let glassList = calculatedProfileData['glass'];
+    if (glassList.length > 0) {
+      let sheetRes = calculateGlassSheets(glassList, glassW, glassH);
+      let rawCost = sheetRes.costingQty * getPrice('glass');
+      let roundedCost = Math.ceil(rawCost / 100) * 100;
+      totalGrandCost += roundedCost;
+
+      tbody.innerHTML += `
+        <tr class="clickable-row" onclick="openItemDetail('glass')">
+          <td>glass ➔</td>
+          <td class="text-right highlight-qty">${sheetRes.costingQty} sheet</td>
+          <td class="text-right">${roundedCost > 0 ? roundedCost.toLocaleString() : '-'}</td>
+        </tr>
+      `;
+    }
+
+    // Section 3: Accessories
+    tbody.innerHTML += `<tr class="section-divider"><td colspan="3">${i18n[currentLang].secAcc}</td></tr>`;
+    let rawWsRolls = calculatedAccessoriesData.weatherstripFt / calculatedAccessoriesData.wsRollFt;
+    let wsRolls = Math.ceil(rawWsRolls / 0.25) * 0.25;
+
+    let accItems = [
+      { name: 'top cap', qtyStr: `${calculatedAccessoriesData.topCap} pcs`, qtyVal: calculatedAccessoriesData.topCap },
+      { name: 'bot cap', qtyStr: `${calculatedAccessoriesData.botCap} pcs`, qtyVal: calculatedAccessoriesData.botCap },
+      { name: 'wheel', qtyStr: `${calculatedAccessoriesData.wheel} pcs`, qtyVal: calculatedAccessoriesData.wheel },
+      { name: 'hook lock', qtyStr: `${calculatedAccessoriesData.hookLock} pcs`, qtyVal: calculatedAccessoriesData.hookLock },
+      { name: 'weatherstrip', qtyStr: `${wsRolls} roll`, qtyVal: wsRolls }
+    ];
+
+    accItems.forEach(acc => {
+      let rawCost = acc.qtyVal * getPrice(acc.name);
+      let roundedCost = Math.ceil(rawCost / 100) * 100;
+      totalGrandCost += roundedCost;
+
+      tbody.innerHTML += `
+        <tr class="clickable-row" onclick="openItemDetail('${acc.name}')">
+          <td>${acc.name} ➔</td>
+          <td class="text-right highlight-qty">${acc.qtyStr}</td>
+          <td class="text-right">${roundedCost > 0 ? roundedCost.toLocaleString() : '-'}</td>
+        </tr>
+      `;
+    });
+
+    // Section 4: Labor & Miscellaneous
+    let miscPricePerSqft = parseFloat(document.getElementById('global-misc-price').value) || 0;
+    let miscCost = Math.ceil((totalSqft * miscPricePerSqft) / 100) * 100;
+    totalGrandCost += miscCost;
+
+    tbody.innerHTML += `<tr class="section-divider"><td colspan="3">${i18n[currentLang].secMisc}</td></tr>`;
+    tbody.innerHTML += `
+      <tr>
+        <td>${i18n[currentLang].totalArea} ➔</td>
+        <td class="text-right highlight-qty">${totalSqft.toFixed(2)} sqft</td>
+        <td class="text-right">${miscCost > 0 ? miscCost.toLocaleString() : '-'}</td>
+      </tr>
+    `;
+
+    // Final calculations
+    let pricePerSqft = totalSqft > 0 ? (totalGrandCost / totalSqft) : 0;
+
+    tbody.innerHTML += `
+      <tr style="border-top: 2px solid var(--accent);">
+        <td colspan="2" class="text-right" id="lbl-grand-total" style="font-weight: bold; color: var(--accent); padding-top:16px;">
+          ${i18n[currentLang].grandTotal}
+        </td>
+        <td class="text-right highlight-qty" style="font-size:15px; padding-top:16px;">
+          ${totalGrandCost > 0 ? totalGrandCost.toLocaleString() : '0'} Ks
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" class="text-right" id="lbl-per-sqft" style="color: var(--sub); font-size:12px; padding-top:4px; padding-bottom:16px;">
+          ${i18n[currentLang].perSqft}
+        </td>
+        <td class="text-right highlight-qty" style="font-size:13px; color: var(--sub); padding-top:4px; padding-bottom:16px;">
+          ${pricePerSqft > 0 ? Math.ceil(pricePerSqft).toLocaleString() : '0'} Ks / sqft
+        </td>
+      </tr>
+    `;
+
+    document.getElementById('input-screen').classList.add('hidden');
+    document.getElementById('output-screen').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function openItemDetail(profileName) {
+    document.getElementById('detail-item-title').innerText = profileName;
+
+    const pageList = document.getElementById('page-list');
+    const pageDiagram = document.getElementById('page-diagram');
+
+    let isAcc = ['top cap', 'bot cap', 'wheel', 'hook lock', 'weatherstrip'].includes(profileName);
+    if (isAcc) {
+      let detailText = '';
+      if (profileName === 'top cap') detailText = `${calculatedAccessoriesData.topCap} pcs`;
+      else if (profileName === 'bot cap') detailText = `${calculatedAccessoriesData.botCap} pcs`;
+      else if (profileName === 'wheel') detailText = `${calculatedAccessoriesData.wheel} pcs`;
+      else if (profileName === 'hook lock') detailText = `${calculatedAccessoriesData.hookLock} pcs`;
+      else if (profileName === 'weatherstrip') {
+        let rawWsRolls = calculatedAccessoriesData.weatherstripFt / calculatedAccessoriesData.wsRollFt;
+        let wsRolls = Math.ceil(rawWsRolls / 0.25) * 0.25;
+        detailText = `${wsRolls} roll(s) [Total: ${calculatedAccessoriesData.weatherstripFt.toFixed(1)} ft]`;
+      }
+
+      pageList.innerHTML = `
+        <div class="list-item-row">
+          <span>${profileName.toUpperCase()}</span>
+          <span style="color:var(--accent); font-weight:600;">${detailText}</span>
+        </div>
+      `;
+      pageDiagram.innerHTML = `
+        <div style="padding: 20px; text-align: center; color: var(--sub); font-size: 13px;">
+          No cutting diagram required for accessories.
+        </div>
+      `;
+
+      document.getElementById('output-screen').classList.add('hidden');
+      document.getElementById('detail-screen').classList.remove('hidden');
+      switchTab(0);
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (profileName === 'glass') {
+      const glassWInput = document.getElementById('global-glass-w');
+      let glassW = parseFloat(glassWInput.dataset.inches) || parseToInches(glassWInput.value, currentUnit);
+
+      const glassHInput = document.getElementById('global-glass-h');
+      let glassH = parseFloat(glassHInput.dataset.inches) || parseToInches(glassHInput.value, currentUnit);
+
+      const glassPieces = calculatedProfileData['glass'];
+      const { sheetCount, layouts, costingQty } = calculateGlassSheets(glassPieces, glassW, glassH);
+
+      let listHTML = `<div style="margin-bottom:10px; font-size:12px; color:var(--sub);">Total Glass Panels: ${glassPieces.length} | Costing Qty: ${costingQty} Sheet(s)</div>`;
+      let counts = {};
+      glassPieces.forEach(p => {
+        let formatted = `${displayLength(p.w)} x ${displayLength(p.h)}`;
+        counts[formatted] = (counts[formatted] || 0) + 1;
+      });
+
+      for (let sizeStr in counts) {
+        listHTML += `
+          <div class="list-item-row">
+            <span>${sizeStr}</span>
+            <span style="color:var(--accent); font-weight:600;">${counts[sizeStr]} pcs</span>
+          </div>
+        `;
+      }
+      pageList.innerHTML = listHTML;
+
+      let diagramHTML = `<div style="margin-bottom:10px; font-size:12px; color:var(--sub);">Required Stocks: ${sheetCount} Sheet(s) (${displayLength(glassW)} x ${displayLength(glassH)})</div>`;
+      
+      const charNames = ["A", "B", "C", "D", "E", "F"];
+
+      layouts.forEach((layoutItem, idx) => {
+        let layoutName = charNames[idx % charNames.length];
+        diagramHTML += `
+          <div class="layout-header">
+            <span>Layout ${layoutName}</span>
+            <span style="color:var(--accent);">${layoutItem.repetition}x</span>
+          </div>
+          <div class="glass-sheet-box">
+        `;
+
+        layoutItem.sheet.pieces.forEach(p => {
+          let leftPct = (p.x / glassW) * 100;
+          let topPct = (p.y / glassH) * 100;
+          let widthPct = (p.placedW / glassW) * 100;
+          let heightPct = (p.placedH / glassH) * 100;
+
+          diagramHTML += `
+            <div class="glass-piece-box" style="left:${leftPct}%; top:${topPct}%; width:${widthPct}%; height:${heightPct}%;">
+              ${displayLength(p.w)} x ${displayLength(p.h)}
+            </div>
+          `;
+        });
+
+        diagramHTML += `</div>`;
+      });
+
+      pageDiagram.innerHTML = diagramHTML;
+
+    } else {
+      const kerf = getKerfInches();
+      const cuts = calculatedProfileData[profileName];
+      const { barCount, bins, costingQty } = calculate1DStockBars(cuts, kerf);
+
+      let listHTML = `<div style="margin-bottom:10px; font-size:12px; color:var(--sub);">Total Pieces: ${cuts.length} | Costing Qty: ${costingQty} Bar(s)</div>`;
+      let counts = {};
+      cuts.forEach(c => {
+        let formatted = displayLength(c);
+        counts[formatted] = (counts[formatted] || 0) + 1;
+      });
+
+      for (let len in counts) {
+        listHTML += `
+          <div class="list-item-row">
+            <span>${len}</span>
+            <span style="color:var(--accent); font-weight:600;">${counts[len]} pcs</span>
+          </div>
+        `;
+      }
+      pageList.innerHTML = listHTML;
+
+      let diagramHTML = `<div style="margin-bottom:10px; font-size:12px; color:var(--sub);">Stock Bars Pattern (${barCount} total):</div>`;
+
+      bins.forEach((bin, idx) => {
+        diagramHTML += `<div style="font-size:11px; margin-top:8px; margin-bottom:4px; color:var(--sub);">Bar #${idx + 1}</div>`;
+        diagramHTML += `<div class="bar-container">`;
+        
+        bin.cuts.forEach(c => {
+          let pct = (c / BAR_LENGTH_INCHES) * 100;
+          let displayLen = displayLength(c);
+          diagramHTML += `<div class="bar-piece" style="width: ${pct}%;" title="${displayLen}">${displayLen}</div>`;
+        });
+
+        if (bin.oversized) {
+          diagramHTML += `<div class="bar-waste" style="width:100%;">OVERSIZE</div>`;
+        } else if (bin.rem > 0) {
+          let remPct = (bin.rem / BAR_LENGTH_INCHES) * 100;
+          let remDisplay = displayLength(bin.rem);
+          diagramHTML += `<div class="bar-waste" style="width: ${remPct}%;">offcut ${remDisplay}</div>`;
+        }
+
+        diagramHTML += `</div>`;
+      });
+
+      pageDiagram.innerHTML = diagramHTML;
+    }
+
+    document.getElementById('output-screen').classList.add('hidden');
+    document.getElementById('detail-screen').classList.remove('hidden');
+    switchTab(0);
+    window.scrollTo(0, 0);
+  }
+
+  function switchTab(idx) {
+    const container = document.getElementById('detail-swiper');
+    const width = container.clientWidth;
+    container.scrollTo({ left: idx * width, behavior: 'smooth' });
+
+    const btnText = document.getElementById('tab-btn-text');
+    const btnVisual = document.getElementById('tab-btn-visual');
+
+    if (idx === 0) {
+      btnText.classList.add('active');
+      btnVisual.classList.remove('active');
+    } else {
+      btnVisual.classList.add('active');
+      btnText.classList.remove('active');
+    }
+  }
+
+  function handleScroll() {
+    const container = document.getElementById('detail-swiper');
+    const idx = Math.round(container.scrollLeft / container.clientWidth);
+    const btnText = document.getElementById('tab-btn-text');
+    const btnVisual = document.getElementById('tab-btn-visual');
+
+    if (idx === 0) {
+      btnText.classList.add('active');
+      btnVisual.classList.remove('active');
+    } else {
+      btnVisual.classList.add('active');
+      btnText.classList.remove('active');
+    }
+  }
+
+  function copyOpticutterFormat() {
+    let rows = document.querySelectorAll('#report-body tr');
+    let text = "Item\tQty_Needed\n";
+    rows.forEach(row => {
+      if (row.classList.contains('section-divider')) return;
+      if (row.id === 'lbl-grand-total' || row.querySelector('#lbl-grand-total')) return;
+      if (row.querySelector('#lbl-per-sqft')) return;
+      
+      let cols = row.querySelectorAll('td');
+      if (cols.length >= 2) {
+        text += `${cols[0].innerText.replace(' ➔', '')}\t${cols[1].innerText}\n`;
+      }
+    });
+    navigator.clipboard.writeText(text);
+    alert('Copied to clipboard!');
+  }
+
+  window.deleteItem = deleteItem;
+  window.openItemDetail = openItemDetail;
+  window.addItem = addItem;
+  window.clearAll = clearAll;
+  window.calculateCutList = calculateCutList;
+  window.openSettings = openSettings;
+  window.closeSettings = closeSettings;
+  window.openPricingScreen = openPricingScreen;
+  window.closePricingScreen = closePricingScreen;
+  window.showInput = showInput;
+  window.showOutput = showOutput;
+  window.switchTab = switchTab;
+  window.handleScroll = handleScroll;
+  window.copyOpticutterFormat = copyOpticutterFormat;
+  window.convertAllUnits = convertAllUnits;
+  window.handleInchInput = handleInchInput;
+  window.toggleLanguage = toggleLanguage;
+  window.toggleTheme = toggleTheme;
+
+  // Initialize Data
+  const initStock = document.getElementById('global-stock-length');
+  initStock.dataset.inches = String(parseToInches(initStock.value, 'feet'));
+  const initGlassW = document.getElementById('global-glass-w');
+  initGlassW.dataset.inches = String(parseToInches(initGlassW.value, 'feet'));
+  const initGlassH = document.getElementById('global-glass-h');
+  initGlassH.dataset.inches = String(parseToInches(initGlassH.value, 'feet'));
+  const initWsRoll = document.getElementById('global-ws-roll');
+  initWsRoll.dataset.inches = String(parseToInches(initWsRoll.value, 'feet'));
+
+  initPricingInputs();
+  toggleLanguage();
+  addItem();
+</script>
+
+</body>
+</html>
