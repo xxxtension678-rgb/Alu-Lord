@@ -1242,7 +1242,7 @@ function loadPricingFromCloud() {
 
     document.querySelectorAll('.unit-input').forEach(field => {
       if (!field.value.trim() || field.value.trim() === '-') {
-        field.value = '-';
+        field.value = '';
         delete field.dataset.inches;
         return;
       }
@@ -1262,7 +1262,7 @@ function loadPricingFromCloud() {
           field.value = formatFeetInches(inches);
         }
       } else {
-        field.value = '-';
+        field.value = '';
         delete field.dataset.inches;
       }
     });
