@@ -1605,8 +1605,9 @@ function loadPricingFromCloud() {
       if (slide === 2) calculatedAccessoriesData.hookLock += 2 * qty;
       else if (slide === 4) calculatedAccessoriesData.hookLock += 3 * qty;
 
-      let lockStileFt = doorH / 12;
-      calculatedAccessoriesData.weatherstripFt += (lockStileFt * 2 * qty);
+      // Weatherstrip = total Lock Frame length × 2
+let totalLockFrameFt = (doorH / 12) * slide;
+calculatedAccessoriesData.weatherstripFt += totalLockFrameFt * 2 * qty;
 
       for (let i = 0; i < qty; i++) {
         if (topFixed > 0) {
